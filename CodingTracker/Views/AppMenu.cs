@@ -11,31 +11,48 @@ using System.Threading.Tasks;
 
 namespace CodingTracker.Views
 {
-   public static class AppMenu
+   public class AppMenu
     {
-        
 
-        public static void Show()
+        private readonly DbController _dbController;
+        public AppMenu()
         {
-            var choice = UserInput.GetUserChoice();
-
-            switch (choice)
+            _dbController = new DbController();
+        }
+        public void Show()
+        {
+            while (true)
             {
-                case MenuChoices.DisplayRecords:
-                    Console.WriteLine("Eyeyeye");
-                    break;
-                case MenuChoices.InsertRecord:
-                    Console.WriteLine("Insert");
-                    break;
-                case MenuChoices.RemoveRecord:
-                    Console.WriteLine("Remove");
-                    break;
-                case MenuChoices.EditRecord:
-                    Console.WriteLine("Edit");
-                    break;
-                
-            }
+                var choice = UserInput.GetUserChoice();
+                List<CodingSession> sessions= new List<CodingSession>();
+                switch (choice)
+                {
+                    case MenuChoices.DisplayRecords:
+                        sessions = _dbController.GetAllRecords();
+                        TableView.ShowTable(sessions);
+                        break;
+                    case MenuChoices.InsertRecord:
+                        var recordInput = UserInput.GetUserRecordInput();
+                        _dbController.Insert(recordInput);
+                        break;
+                    case MenuChoices.RemoveRecord:
+                         sessions= _dbController.GetAllRecords();
+                        int? idToRemove = UserInput.GetUserId(sessions);
+                        _dbController.Remove(idToRemove);
+                        AnsiConsole.MarkupLine("[green] Removed succesfully! [/]");
+                        break;
+                    case MenuChoices.EditRecord:
+                       sessions = _dbController.GetAllRecords();
+                       int? idToUpdate= UserInput.GetUserId(sessions);
+                       var updatedRecord= UserInput.GetUserRecordInput();
+                        _dbController.Update(idToUpdate, updatedRecord);
+                        break;
+                    case MenuChoices.Exit:
+                        AnsiConsole.MarkupLine("[Green] Goodbye! [/]");
+                        return;
 
+                }
+            }
         }
     }
 }

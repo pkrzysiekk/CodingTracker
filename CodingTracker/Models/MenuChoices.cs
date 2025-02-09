@@ -16,7 +16,9 @@ namespace CodingTracker.Models
         [Display(Name = "Remove record")]
         RemoveRecord,
         [Display(Name = "Edit record")]
-        EditRecord
+        EditRecord,
+        [Display(Name = "Exit Menu")]
+        Exit
 
     }
 }
